@@ -22,6 +22,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 error_reporting(E_ALL);
 ini_set('display_errors', true);
+ini_set('memory_limit', '128M');
 
 class phpExcel
 {
@@ -70,13 +71,13 @@ class phpExcel
 
         // Add some data
         if (!empty($this->data['data'])) {
-
-            foreach ($this->data['data'] as $key => $value) {
+            $spreadsheet->getActiveSheet()->fromArray($this->data['data'],NULL,$this->data['startCell']);
+            /*foreach ($this->data['data'] as $key => $value) {
                 foreach ($value as $k => $v) {
                     $spreadsheet->setActiveSheetIndex(0)
                         ->setCellValue($this->data_key[$key] . ($k + 1), $v);
                 }
-            }
+            }*/
         }
 
         // Miscellaneous glyphs, UTF-8
@@ -85,7 +86,7 @@ class phpExcel
             ->setCellValue('A5', 'éàèùâêîôûëïüÿäöüç');*/
 
         // Rename worksheet
-        $Sheet_index = $spreadsheet->getIndex($spreadsheet->getActiveSheet());
+        $Sheet_index = $spreadsheet->getActiveSheetIndex();
         $spreadsheet->getActiveSheet()->setTitle($this->data['worksheet'][$Sheet_index]['Title']);
 
         // Set active sheet index to the first sheet, so Excel opens this as the first sheet

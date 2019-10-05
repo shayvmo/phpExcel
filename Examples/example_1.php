@@ -12,7 +12,7 @@ require_once '../vendor/autoload.php';
 include_once '../Core/phpExcel.php';
 
 $excel = new \shayvmo\phpExcel([
-    'filename'=>'test_file',
+    'filename'=>'test_file'.time(),
     'properties'=>[
         'Creator'=>'Eric',//文件创建者
         'LastModifiedBy'=>'Eric',//最后更新
@@ -25,6 +25,7 @@ $excel = new \shayvmo\phpExcel([
     'worksheet'=>[
         ['Title'=>'sheet01']
     ],
+    'startCell'=>'A1',
     'data'=>[
         ['Hello','World','!'],
         ['Excited','For','You!'],

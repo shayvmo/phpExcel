@@ -1,6 +1,29 @@
 {
-  "require": {
-    "php": ">= 5.6.0",
-    "phpoffice/phpspreadsheet": "1.8.2"
-  }
+    "name": "shayvmo/php-excel",
+    "description": "use phpspreadsheet for excel",
+    "authors": [
+        {
+            "name": "shayvmo",
+            "email": "1006897172@qq.com",
+            "homepage": "http://blog.shayvmo.cn/"
+        }
+    ],
+    "homepage":"https://github.com/shayvmo/phpExcel",
+    "require": {
+        "php": ">=5.6",
+        "phpoffice/phpspreadsheet": "1.8.2"
+    },
+    "license": "MIT",
+    "keywords": [
+        "shayvmo",
+        "php-excel",
+        "php",
+        "excel",
+        "phpspreadsheet"
+    ],
+    "autoload": {
+        "psr-4": {
+            "shayvmo\\": "Core/"
+        }
+    }
 }

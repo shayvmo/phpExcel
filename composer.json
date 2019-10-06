@@ -10,8 +10,7 @@
     ],
     "homepage":"https://github.com/shayvmo/phpExcel",
     "require": {
-        "php": ">=5.6",
-        "phpoffice/phpspreadsheet": "1.8.2"
+        "php": ">=5.6.0"
     },
     "license": "MIT",
     "keywords": [

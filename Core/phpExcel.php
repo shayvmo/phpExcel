@@ -325,9 +325,7 @@ class phpExcel
      */
     private function exportAction($spreadsheet,$fileName='excel',$type='Xls')
     {
-        $type = 'Xls';
-        $Content_type = 'application/vnd.ms-excel';
-        $extension = '.xls';
+
         switch ($type)
         {
             case 'Xls':
@@ -341,6 +339,9 @@ class phpExcel
                 $extension = '.xlsx';
                 break;
             default:
+                $type = 'Xls';
+                $Content_type = 'application/vnd.ms-excel';
+                $extension = '.xls';
                 break;
         }
 

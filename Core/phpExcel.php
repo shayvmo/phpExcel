@@ -19,6 +19,8 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Font;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 error_reporting(E_ALL);
 ini_set('display_errors', true);
@@ -38,19 +40,19 @@ class phpExcel
     public $data_key = [
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
         'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-        'U', 'V', 'W', 'X', 'Y', 'Z',
+        'U', 'V', 'W', 'X', 'Y', 'Z'
     ];
 
     public function __construct($data)
     {
-        $this->FileName = $data['filename'];
-        $this->Creator = $data['properties']['Creator'];//文件创建者
-        $this->LastModifiedBy = $data['properties']['LastModifiedBy'];//最后更新
-        $this->Title = $data['properties']['Title'];//标题
-        $this->Subject = $data['properties']['Subject'];//主题
-        $this->Description = $data['properties']['Description'];//描述
-        $this->Keywords = $data['properties']['Keywords'];//关键词
-        $this->Category = $data['properties']['Category'];//分类
+        $this->FileName = !empty($data['filename'])?$data['filename']:'Eric';
+        $this->Creator = !empty($data['properties']['Creator'])?$data['properties']['Creator']:'Eric';//文件创建者
+        $this->LastModifiedBy = !empty($data['properties']['LastModifiedBy'])?$data['properties']['LastModifiedBy']:'';//最后更新
+        $this->Title = !empty($data['properties']['Title'])?$data['properties']['Title']:'Eric';//标题
+        $this->Subject = !empty($data['properties']['Subject'])?$data['properties']['Subject']:'导出文档';//主题
+        $this->Description = !empty($data['properties']['Description'])?$data['properties']['Description']:'';//描述
+        $this->Keywords = !empty($data['properties']['Keywords'])?$data['properties']['Keywords']:'';//关键词
+        $this->Category = !empty($data['properties']['Category'])?$data['properties']['Category']:'';//分类
         $this->data = $data;//数据
     }
 
@@ -71,19 +73,16 @@ class phpExcel
 
         // Add some data
         if (!empty($this->data['data'])) {
-            $spreadsheet->getActiveSheet()->fromArray($this->data['data'],NULL,$this->data['startCell']);
-            /*foreach ($this->data['data'] as $key => $value) {
-                foreach ($value as $k => $v) {
-                    $spreadsheet->setActiveSheetIndex(0)
-                        ->setCellValue($this->data_key[$key] . ($k + 1), $v);
+//            $spreadsheet->getActiveSheet()->fromArray($this->data['data'],NULL,$this->data['startCell']);
+            $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+            foreach ($this->data['data'] as $key => $value) {
+                $new_value = array_values($value);
+                foreach ($new_value as $k => $v) {
+                    $spreadsheet->getActiveSheet()->setCellValueExplicit($this->data_key[$k] . ($key + 1), $v,DataType::TYPE_STRING);
                 }
-            }*/
+                unset($new_value);
+            }
         }
-
-        // Miscellaneous glyphs, UTF-8
-        /*$spreadsheet->setActiveSheetIndex(0)
-            ->setCellValue('A4', 'Miscellaneous glyphs')
-            ->setCellValue('A5', 'éàèùâêîôûëïüÿäöüç');*/
 
         // Rename worksheet
         $Sheet_index = $spreadsheet->getActiveSheetIndex();
@@ -91,9 +90,160 @@ class phpExcel
 
         // Set active sheet index to the first sheet, so Excel opens this as the first sheet
         $spreadsheet->setActiveSheetIndex(0);
-        self::exportAction($spreadsheet,$this->FileName);
+//        self::exportAction($spreadsheet,$this->FileName);
+        self::exportLocal($spreadsheet,$this->FileName);
 
 
+    }
+
+    public function example_xls_2()
+    {
+        $spreadsheet = new Spreadsheet();
+//        $spreadsheet->setActiveSheetIndex(1);//需要先创建Sheet
+
+        $spreadsheet->getProperties()->setCreator($this->Creator)
+            ->setLastModifiedBy($this->LastModifiedBy)
+            ->setTitle($this->Title)
+            ->setSubject($this->Subject)
+            ->setDescription($this->Description)
+            ->setKeywords($this->Keywords)
+            ->setCategory($this->Category);
+
+
+        $activeSheet = $spreadsheet->getActiveSheet();
+
+        //列宽
+        if(!empty($this->data['options']['setWidth']))
+        {
+            foreach ($this->data['options']['setWidth'] as $key=>$value)
+            {
+                $activeSheet->getColumnDimension($key)->setWidth($value);
+            }
+        }
+
+        //合并
+        if(!empty($this->data['options']['mergeCells']))
+        {
+            foreach ($this->data['options']['mergeCells'] as $value)
+            {
+                $activeSheet->mergeCells($value);
+            }
+        }
+
+        //字体加粗
+        if(!empty($this->data['options']['bold']))
+        {
+            foreach ($this->data['options']['bold'] as $value)
+            {
+                $activeSheet->getStyle($value)->getFont()->setBold(true);
+            }
+
+        }
+
+        //设置背景色
+        if(!empty($this->data['options']['setARGB']))
+        {
+            foreach ($this->data['options']['setARGB'] as $key=>$value)
+            {
+                $activeSheet->getStyle($key)
+                    ->getFill()->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()->setARGB($value);
+            }
+
+        }
+
+        //设置单元格边框
+        if(!empty($this->data['options']['setBorder']))
+        {
+            $border = [
+                'borders'=>[
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => [ 'rgb' => $this->data['options']['setBorder'][1] ]
+                    ]
+                ]
+            ];
+            $activeSheet->getStyle($this->data['options']['setBorder'][0])->applyFromArray($border);
+
+        }
+
+
+
+//        $activeSheet->getStyle('A1')->applyFromArray([
+//            'font' => [
+//                'name' => 'Arial',
+//                'bold' => true,
+//                'italic' => false,
+//                'underline' => Font::UNDERLINE_DOUBLE,
+//                'strikethrough' => false,
+//                'color' => ['rgb' => '808080']
+//            ],
+//            'borders' => [
+//                'bottom' => [
+//                    'borderStyle' => Border::BORDER_THIN,
+//                    'color' => ['rgb' => '808080']
+//                ],
+//                'top' => [
+//                    'borderStyle' => Border::BORDER_THIN,
+//                    'color' => ['rgb' => '808080']
+//                ]
+//            ],
+//            'alignment' => [
+//                'horizontal' => Alignment::HORIZONTAL_CENTER,
+//                'vertical' => Alignment::VERTICAL_CENTER,
+//                'wrapText' => true,
+//            ],
+//            'quotePrefix' => true
+//        ]);
+
+        // Add some data
+        if (!empty($this->data['data'])) {
+//            $activeSheet->fromArray($this->data['data'],NULL,$this->data['startCell']);
+//            $activeSheet->getColumnDimension('B')->setWidth(20);
+//            $activeSheet->getColumnDimension('B')->setWidth(20);
+            foreach ($this->data['data'] as $key => $value) {
+                foreach ($value as $k => $v) {
+                    $activeSheet->setCellValueExplicit($k . ($key+1), $v,DataType::TYPE_STRING);
+                }
+            }
+        }
+
+        //设置居中样式
+        if(!empty($this->data['options']['alignment']))
+        {
+            //水平
+            $horizontal = [
+                'left'=>Alignment::HORIZONTAL_LEFT,
+                'right'=>Alignment::HORIZONTAL_RIGHT,
+                'center'=>Alignment::HORIZONTAL_CENTER,
+            ];
+            //垂直
+            $vertical = [
+                'top'=>Alignment::VERTICAL_TOP,
+                'bottom'=>Alignment::VERTICAL_BOTTOM,
+                'center'=>Alignment::VERTICAL_CENTER,
+            ];
+            foreach ($this->data['options']['alignment'] as $key=>$value)
+            {
+                $alignment = [
+                    'alignment' => [
+                        'horizontal' => isset($value[0])?$horizontal[$value[0]]:Alignment::HORIZONTAL_LEFT,
+                        'vertical' => isset($value[1])?$vertical[$value[1]]:Alignment::VERTICAL_TOP,
+                        'wrapText' => true,
+                    ]
+                ];
+                $activeSheet->getStyle($key)->applyFromArray($alignment);
+            }
+        }
+
+        // Rename worksheet
+        $Sheet_index = $spreadsheet->getActiveSheetIndex();
+        $activeSheet->setTitle($this->data['worksheet'][$Sheet_index]['Title']);
+
+        // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $spreadsheet->setActiveSheetIndex(0);
+//        self::exportAction($spreadsheet,$this->FileName);
+        self::exportLocal($spreadsheet,$this->FileName);
     }
 
     public function example_types()
@@ -360,6 +510,38 @@ class phpExcel
 
         $writer = IOFactory::createWriter($spreadsheet, $type);
         $writer->save('php://output');
+        exit;
+    }
+
+    /**
+     * 保存在服务器本地
+     * @param $spreadsheet
+     * @param string $fileName
+     * @param string $savePath
+     * @param string $type
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
+    private function exportLocal($spreadsheet,$fileName='excel',$savePath='',$type='Xls')
+    {
+
+        switch ($type)
+        {
+            case 'Xls':
+                $type = 'Xls';
+                break;
+            case 'Xlsx':
+                $type = 'Xlsx';
+                break;
+            default:
+                $type = 'Xls';
+                break;
+        }
+
+        if(!empty($savePath) && !is_dir($savePath)) {
+            mkdir($savePath);
+        }
+        $writer = IOFactory::createWriter($spreadsheet, $type);
+        $writer->save($savePath.$fileName.'.'.strtolower($type));
         exit;
     }
 }

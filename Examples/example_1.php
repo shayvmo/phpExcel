@@ -26,6 +26,18 @@ $excel = new \shayvmo\phpExcel([
         ['Title'=>'sheet01']
     ],
     'startCell'=>'A1',
+    'options'=>[
+        'print'=>'',//设置打印格式
+        'freezePane'=>'',//锁定行数，例如表头为第一行，则锁定表头输入A2
+        'setARGB'=>'',//设置背景色，例如['A1', 'C1']
+        'setWidth'=>'',//设置宽度，例如['A' => 30, 'C' => 20]
+        'setBorder'=>'',//设置单元格边框
+        'mergeCells'=>'',//设置合并单元格，例如['A1:J1' => 'A1:J1']
+        'formula'=>'',//设置公式，例如['F2' => '=IF(D2>0,E42/D2,0)']
+        'format'=>'',//设置格式，整列设置，例如['A' => 'General']
+        'alignCenter'=>'',//设置居中样式，例如['A1', 'A2']
+        'bold'=>'',//设置加粗样式，例如['A1', 'A2']
+    ],
     'data'=>[
         ['Hello','World','!'],
         ['Excited','For','You!'],

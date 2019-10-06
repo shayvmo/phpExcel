@@ -25,7 +25,6 @@ $excel = new \shayvmo\phpExcel([
     'worksheet'=>[
         ['Title'=>'sheet01']
     ],
-    'startCell'=>'A1',
     'options'=>[
         'print'=>'',//设置打印格式
         'freezePane'=>'',//锁定行数，例如表头为第一行，则锁定表头输入A2
@@ -44,4 +43,4 @@ $excel = new \shayvmo\phpExcel([
     ]
 ]);
 
-$excel->example_xls();
+$excel->exportExcel();

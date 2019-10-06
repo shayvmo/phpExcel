@@ -13,28 +13,18 @@ include_once '../Core/phpExcel.php';
 
 $excel = new \shayvmo\phpExcel([
     'filename'=>'test_file'.time(),
-    'properties'=>[
-        'Creator'=>'Eric',//文件创建者
-        'LastModifiedBy'=>'Eric',//最后更新
-        'Title'=>'导出文档',//标题
-        'Subject'=>'导出文档',//主题
-        'Description'=>'php导出文档',//描述
-        'Keywords'=>'',//关键词
-        'Category'=>'',//分类
-    ],
-    'worksheet'=>[
-        ['Title'=>'sheet01']
-    ],
-    'startCell'=>'A1',
     'options'=>[
-        'print'=>true,//设置打印格式
+        //设置打印格式
+        'print'=>true,
 
-        'freezePane'=>[],//锁定行数，例如表头为第一行，则锁定表头输入A2
+        //锁定行数，例如表头为第一行，则锁定表头输入A2
+        'freezePane'=>[],
 
+        //设置背景色
         'setARGB'=>[
             'A1'=>'FFFFFF00',
             'F2'=>'FFFFFF00'
-        ],//设置背景色
+        ],
 
         //设置宽度
         'setWidth'=>[
@@ -47,11 +37,13 @@ $excel = new \shayvmo\phpExcel([
         'setBorder'=>['A1:I3','000000'],
 
         //设置合并单元格
-        'mergeCells'=>['A1:B1','B2:B3'],
+        'mergeCells'=>[],
 
-        'formula'=>[],//设置公式，例如['F2' => '=IF(D2>0,E42/D2,0)']
+        //设置公式，例如['F2' => '=IF(D2>0,E42/D2,0)']
+        'formula'=>[],
 
-        'format'=>['A'=>''],//设置格式，整列设置，例如['A' => 'General']
+        //设置格式，整列设置，例如['A' => 'General']
+        'format'=>['A'=>''],
 
         //设置居中样式
         'alignment'=>[
@@ -76,7 +68,7 @@ $excel = new \shayvmo\phpExcel([
             'H'=>'零售价',
             'I'=>'库存',
         ],
-        2=>[
+        [
             'A'=>'1',
             'B'=>'2',
             'C'=>'3',

@@ -168,15 +168,74 @@ class phpExcel_beta
         //设置单元格边框
         if(!empty($this->data['options']['setBorder']))
         {
-            $border = [
+            /*$border = [
                 'borders'=>[
                     'allBorders' => [
                         'borderStyle' => Border::BORDER_THIN,
                         'color' => [ 'rgb' => $this->data['options']['setBorder'][1] ]
                     ]
                 ]
-            ];
-            $activeSheet->getStyle($this->data['options']['setBorder'][0])->applyFromArray($border);
+            ];*/
+            $border_arr = [];
+            foreach ($this->data['options']['setBorder'] as $key=>$value)
+            {
+                $border = [
+                    'borders'=>[
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => [ 'rgb' => $value ]
+                        ]
+                    ]
+                ];
+                $pCoordinate = strtoupper($key);
+                //匹配
+                if (preg_match('/^([A-Z]+\d+)([:]([A-Z]+\d+))?$/',$pCoordinate)) {
+                    $activeSheet->getStyle($pCoordinate)->applyFromArray($border);
+
+                } else if (preg_match('/^([A-Z])([:]([A-Z]))?$/',$pCoordinate)) {
+//                    exit('success');
+                    if (strpos($pCoordinate,':') === false) {
+                        if(!isset($border_arr[$pCoordinate])) {
+                            $border_arr[$pCoordinate] = $border;
+                        }
+                    } else {
+                        list($a,$b) = explode(':',$pCoordinate);
+                        if(ord($a)<ord($b)) {
+                            $merge_arr = range(ord($a),ord($b));
+                            foreach ($merge_arr as $v )
+                            {
+                                if(!isset($border_arr[chr($v)])) {
+                                    $border_arr[chr($v)] = $border;
+                                }
+                            }
+                        } elseif (ord($a) == ord($b)) {
+                            if(!isset($border_arr[$a])) {
+                                $border_arr[$a] = $border;
+                            }
+                        }
+
+                    }
+                    unset($alignment,$pCoordinate);
+                } else {
+                    unset($alignment,$pCoordinate);
+                    continue;
+                }
+            }
+
+
+            //合并的单元格先处理
+//            if(!empty($this->data['options']['mergeCells']) && !empty($border_arr))
+//            {
+//                $border_arr_keys = array_keys($border_arr);
+//                foreach ($this->data['options']['mergeCells'] as $value)
+//                {
+//
+//                    if (strpos($value,''))
+//                    $activeSheet->mergeCells($value);
+//                    $activeSheet->getStyle()->applyFromArray($border_arr[]);
+//                }
+//            }
+//            $activeSheet->getStyle($this->data['options']['setBorder'][0])->applyFromArray($border);
 
         }
 
@@ -250,7 +309,14 @@ class phpExcel_beta
                     if (!empty($alignment_arr) && isset($alignment_arr[$k])) {
                         $activeSheet->getStyle($k . ($key+1))->applyFromArray($alignment_arr[$k]);
                     }
+                    if (!empty($border_arr) && isset($border_arr[$k])) {
+                        $activeSheet->getStyle($k . ($key+1))->applyFromArray($border_arr[$k]);
+                    }
                 }
+            }
+            $length = count($this->data['data']);//A-G  A1-G.$length
+            if (!empty($border_arr) && isset($border_arr[$k])) {
+                $activeSheet->getStyle($k . ($key+1))->applyFromArray($border_arr[$k]);
             }
         }
 

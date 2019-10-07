@@ -280,10 +280,10 @@ class phpExcel_beta
                         list($a,$b) = explode(':',$pCoordinate);
                         if(ord($a)<ord($b)) {
                             $merge_arr = range(ord($a),ord($b));
-                            foreach ($merge_arr as $value )
+                            foreach ($merge_arr as $v)
                             {
-                                if(!isset($alignment_arr[chr($value)])) {
-                                    $alignment_arr[chr($value)] = $alignment;
+                                if(!isset($alignment_arr[chr($v)])) {
+                                    $alignment_arr[chr($v)] = $alignment;
                                 }
                             }
                         } elseif (ord($a) == ord($b)) {

@@ -165,79 +165,28 @@ class phpExcel_beta
 
         }
 
-        //设置单元格边框
-        if(!empty($this->data['options']['setBorder']))
-        {
-            /*$border = [
-                'borders'=>[
-                    'allBorders' => [
-                        'borderStyle' => Border::BORDER_THIN,
-                        'color' => [ 'rgb' => $this->data['options']['setBorder'][1] ]
-                    ]
-                ]
-            ];*/
-            $border_arr = [];
-            foreach ($this->data['options']['setBorder'] as $key=>$value)
+
+
+
+
+        //公式
+        if(!empty($this->data['options']['formula'])) {
+            foreach ( $this->data['options']['formula'] as $k=>$v)
             {
-                $border = [
-                    'borders'=>[
-                        'allBorders' => [
-                            'borderStyle' => Border::BORDER_THIN,
-                            'color' => [ 'rgb' => $value ]
-                        ]
-                    ]
-                ];
-                $pCoordinate = strtoupper($key);
-                //匹配
-                if (preg_match('/^([A-Z]+\d+)([:]([A-Z]+\d+))?$/',$pCoordinate)) {
-                    $activeSheet->getStyle($pCoordinate)->applyFromArray($border);
+                $activeSheet->setCellValue($k,$v);
+            }
+        }
 
-                } else if (preg_match('/^([A-Z])([:]([A-Z]))?$/',$pCoordinate)) {
-//                    exit('success');
-                    if (strpos($pCoordinate,':') === false) {
-                        if(!isset($border_arr[$pCoordinate])) {
-                            $border_arr[$pCoordinate] = $border;
-                        }
-                    } else {
-                        list($a,$b) = explode(':',$pCoordinate);
-                        if(ord($a)<ord($b)) {
-                            $merge_arr = range(ord($a),ord($b));
-                            foreach ($merge_arr as $v )
-                            {
-                                if(!isset($border_arr[chr($v)])) {
-                                    $border_arr[chr($v)] = $border;
-                                }
-                            }
-                        } elseif (ord($a) == ord($b)) {
-                            if(!isset($border_arr[$a])) {
-                                $border_arr[$a] = $border;
-                            }
-                        }
+        // Add some data
+        if (!empty($this->data['data'])) {
+            foreach ($this->data['data'] as $key => $value) {
+                foreach ($value as $k => $v) {
+                    $activeSheet->setCellValueExplicit($k . ($key+1), $v,DataType::TYPE_STRING);
 
-                    }
-                    unset($alignment,$pCoordinate);
-                } else {
-                    unset($alignment,$pCoordinate);
-                    continue;
                 }
             }
-
-
-            //合并的单元格先处理
-//            if(!empty($this->data['options']['mergeCells']) && !empty($border_arr))
-//            {
-//                $border_arr_keys = array_keys($border_arr);
-//                foreach ($this->data['options']['mergeCells'] as $value)
-//                {
-//
-//                    if (strpos($value,''))
-//                    $activeSheet->mergeCells($value);
-//                    $activeSheet->getStyle()->applyFromArray($border_arr[]);
-//                }
-//            }
-//            $activeSheet->getStyle($this->data['options']['setBorder'][0])->applyFromArray($border);
-
         }
+
 
         //设置居中样式
         if(!empty($this->data['options']['alignment']))
@@ -255,7 +204,6 @@ class phpExcel_beta
                 'center'=>Alignment::VERTICAL_CENTER,
             ];
 
-            $alignment_arr = [];//含有居中样式的单元格
             foreach ($this->data['options']['alignment'] as $key=>$value)
             {
                 $alignment = [
@@ -272,25 +220,13 @@ class phpExcel_beta
 
                 } else if (preg_match('/^([A-Z])([:]([A-Z]))?$/',$pCoordinate)) {
 //                    exit('success');
+                    $highest_row = $activeSheet->getHighestRow();//最大行数
+
                     if (strpos($pCoordinate,':') === false) {
-                        if(!isset($alignment_arr[$pCoordinate])) {
-                            $alignment_arr[$pCoordinate] = $alignment;
-                        }
+                        $activeSheet->getStyle($pCoordinate.'1:'.$pCoordinate.$highest_row)->applyFromArray($alignment);
                     } else {
                         list($a,$b) = explode(':',$pCoordinate);
-                        if(ord($a)<ord($b)) {
-                            $merge_arr = range(ord($a),ord($b));
-                            foreach ($merge_arr as $v)
-                            {
-                                if(!isset($alignment_arr[chr($v)])) {
-                                    $alignment_arr[chr($v)] = $alignment;
-                                }
-                            }
-                        } elseif (ord($a) == ord($b)) {
-                            if(!isset($alignment_arr[$a])) {
-                                $alignment_arr[$a] = $alignment;
-                            }
-                        }
+                        $activeSheet->getStyle($a.'1:'.$b.$highest_row)->applyFromArray($alignment);
 
                     }
                     unset($alignment,$pCoordinate);
@@ -301,22 +237,40 @@ class phpExcel_beta
             }
         }
 
-        // Add some data
-        if (!empty($this->data['data'])) {
-            foreach ($this->data['data'] as $key => $value) {
-                foreach ($value as $k => $v) {
-                    $activeSheet->setCellValueExplicit($k . ($key+1), $v,DataType::TYPE_STRING);
-                    if (!empty($alignment_arr) && isset($alignment_arr[$k])) {
-                        $activeSheet->getStyle($k . ($key+1))->applyFromArray($alignment_arr[$k]);
+
+        //设置单元格边框
+        if(!empty($this->data['options']['setBorder']))
+        {
+            foreach ($this->data['options']['setBorder'] as $key=>$value)
+            {
+                $border = [
+                    'borders'=>[
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => [ 'rgb' => $value ]
+                        ]
+                    ]
+                ];
+                $pCoordinate = strtoupper($key);
+                //匹配
+                if (preg_match('/^([A-Z]+\d+)([:]([A-Z]+\d+))?$/',$pCoordinate)) {
+                    $activeSheet->getStyle($pCoordinate)->applyFromArray($border);
+
+                } else if (preg_match('/^([A-Z])([:]([A-Z]))?$/',$pCoordinate)) {
+                    $highest_row = $activeSheet->getHighestRow();//最大行数
+                    if (strpos($pCoordinate,':') === false) {
+                        $activeSheet->getStyle($pCoordinate.'1:'.$pCoordinate.$highest_row)->applyFromArray($border);
+                    } else {
+                        list($a,$b) = explode(':',$pCoordinate);
+
+                        $highest_column = $activeSheet->getHighestColumn();//最大列
+                        $activeSheet->getStyle($a.'1:'.$b.$highest_row)->applyFromArray($border);
                     }
-                    if (!empty($border_arr) && isset($border_arr[$k])) {
-                        $activeSheet->getStyle($k . ($key+1))->applyFromArray($border_arr[$k]);
-                    }
+                    unset($alignment,$pCoordinate);
+                } else {
+                    unset($alignment,$pCoordinate);
+                    continue;
                 }
-            }
-            $length = count($this->data['data']);//A-G  A1-G.$length
-            if (!empty($border_arr) && isset($border_arr[$k])) {
-                $activeSheet->getStyle($k . ($key+1))->applyFromArray($border_arr[$k]);
             }
         }
 

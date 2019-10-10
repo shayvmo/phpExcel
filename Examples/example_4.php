@@ -9,12 +9,9 @@
 
 require_once '../vendor/autoload.php';
 
-//include_once '../Core/phpExcel.php';
-include_once '../Core/phpExcel_beta.php';
+include_once '../Core/phpExcel.php';
 
-$excel = new \shayvmo\phpExcel_beta([
-    'savePath'=>'D:\wamp64\www\phpExcel_test',//保存路径
-    'filename'=>'test_file'.time(),
+$excel = new \shayvmo\phpExcel([
     'properties'=>[
         'Creator'=>'Eric',//文件创建者
         'LastModifiedBy'=>'Eric',//最后更新
@@ -44,13 +41,13 @@ $excel = new \shayvmo\phpExcel_beta([
 
         //设置单元格边框：位置，颜色
         'setBorder'=>[
-            'A1:G8'=>'000000'
+            'A:G'=>'000000'
         ],
 
         //设置合并单元格
         'mergeCells'=>['A1:G1','A2:G2','A3:B3','C3:D3','E3:G3','A4:B4','C4:D4','E4:G4'],
 
-        'formula'=>[],//设置公式，例如['F2' => '=IF(D2>0,E42/D2,0)']
+        'formula'=>['G9'=>'=G7+G8'],//设置公式，例如['F2' => '=IF(D2>0,E42/D2,0)']
 
         'format'=>['A'=>''],//设置格式，整列设置，例如['A' => 'General']
 
@@ -121,4 +118,5 @@ $excel = new \shayvmo\phpExcel_beta([
     ]
 ]);
 
-$excel->exportExcel();
+
+$excel->exportExcel('',__DIR__);

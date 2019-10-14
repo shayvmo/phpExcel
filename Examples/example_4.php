@@ -9,12 +9,9 @@
 
 require_once '../vendor/autoload.php';
 
-//include_once '../Core/phpExcel.php';
-include_once '../Core/phpExcel_beta.php';
+include_once '../Core/phpExcel.php';
 
-$excel = new \shayvmo\phpExcel_beta([
-    'savePath'=>'D:\wamp64\www\phpExcel_test',//保存路径
-    'filename'=>'test_file'.time(),
+$excel = new \shayvmo\phpExcel([
     'properties'=>[
         'Creator'=>'Eric',//文件创建者
         'LastModifiedBy'=>'Eric',//最后更新
@@ -141,4 +138,5 @@ $excel = new \shayvmo\phpExcel_beta([
     ]
 ]);
 
-$excel->exportExcel();
+
+$excel->exportExcel('',__DIR__);

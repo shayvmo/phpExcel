@@ -9,12 +9,9 @@
 
 require_once '../vendor/autoload.php';
 
-//include_once '../Core/phpExcel.php';
-include_once '../Core/phpExcel_beta.php';
+include_once '../Core/phpExcel.php';
 
-$excel = new \shayvmo\phpExcel_beta([
-    'savePath'=>'D:\wamp64\www\phpExcel_test',//保存路径
-    'filename'=>'test_file'.time(),
+$excel = new \shayvmo\phpExcel([
     'properties'=>[
         'Creator'=>'Eric',//文件创建者
         'LastModifiedBy'=>'Eric',//最后更新
@@ -30,9 +27,14 @@ $excel = new \shayvmo\phpExcel_beta([
     'options'=>[
         'print'=>true,//设置打印格式
 
-        'freezePane'=>[],//锁定行数，例如表头为第一行，则锁定表头输入A2
+        //锁定行数，例如表头为第一行，则锁定表头输入A2
+//        'freezePane'=>[],
 
-        'setARGB'=>[],//设置背景色
+        //设置背景色 单元格=>颜色RGB
+        'setARGB'=>[
+            'A1' => 'FFFFFF00',
+            'F2' => 'FFFFFF00'
+        ],
 
         //设置宽度
         'setWidth'=>[
@@ -42,7 +44,7 @@ $excel = new \shayvmo\phpExcel_beta([
             'G'=>15,
         ],
 
-        //设置单元格边框：位置，颜色
+        //设置单元格边框：位置=>颜色
         'setBorder'=>[
             'A1:G8'=>'000000'
         ],
@@ -50,9 +52,11 @@ $excel = new \shayvmo\phpExcel_beta([
         //设置合并单元格
         'mergeCells'=>['A1:G1','A2:G2','A3:B3','C3:D3','E3:G3','A4:B4','C4:D4','E4:G4'],
 
-        'formula'=>[],//设置公式，例如['F2' => '=IF(D2>0,E42/D2,0)']
+        //设置公式，例如['F2' => '=IF(D2>0,E42/D2,0)']
+        'formula'=>['G9' => '=G7+G8'],
 
-        'format'=>['A'=>''],//设置格式，整列设置，例如['A' => 'General']
+        //设置格式，整列设置，例如['A' => 'General']
+//        'format'=>['A'=>''],
 
         //设置居中样式
         'alignment'=>[
@@ -63,17 +67,37 @@ $excel = new \shayvmo\phpExcel_beta([
             'A:I'=>['center','center'],//水平，垂直
         ],
 
+        //字体
+        'font'=>[
+            'A1'=>[
+                'name' => '仿宋',//字体,选填
+                'size' => 15,//字体大小,选填
+                'bold' => true,//是否加粗,选填
+                'italic' => false,//斜体,选填
+                'strikethrough' => true,//删除线,选填
+                'color' => '000000'//颜色,选填
+            ],
+            'B'=>[
+                'name' => 'Arial',//字体,选填
+                'size' => 11,//字体大小,选填
+                'bold' => true,//是否加粗,选填
+                'italic' => true,//斜体,选填
+                'strikethrough' => true,//删除线,选填
+                'color' => '808080'//颜色,选填
+            ],
+        ],
+
         'bold'=>['A5:H5'],//设置加粗样式，例如['A1', 'A2']
     ],
     'data'=>[
         [
-            'A'=>'东城加油站'
+            'A'=>'开心仓'
         ],
         [
             'A'=>'入库验收单'
         ],
         [
-            'A'=>'由中央仓发往东城加油站',
+            'A'=>'由快乐仓发往开心仓',
             'C'=>'操作日期：'.date('Y-m-d H:i:s'),
             'E'=>'进货单号：'.rand(1000,9999).rand(1000,9999).rand(1000,9999),
         ],
@@ -121,4 +145,11 @@ $excel = new \shayvmo\phpExcel_beta([
     ]
 ]);
 
-$excel->exportExcel();
+/**
+ * 1、文件名称。例如：1.xls
+ * 自动根据文件名后缀，导出xls 或者xlsx
+ *
+ *2、保存路径
+ * 默认是导出Excel下载，填写路径可以保存在服务器本地
+ */
+$excel->exportExcel('1.xls',__DIR__);

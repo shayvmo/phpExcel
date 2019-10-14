@@ -9,15 +9,9 @@
 
 namespace shayvmo;
 
-use PhpOffice\PhpSpreadsheet\Helper\Sample;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\RichText\RichText;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Style\Color;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Font;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -37,13 +31,7 @@ class phpExcel
     public $Description;
     public $Keywords;
     public $Category;
-    public $alignment_style='';
     public $data;
-    public $data_key = [
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
-        'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
-        'U', 'V', 'W', 'X', 'Y', 'Z'
-    ];
 
     public function __construct($data)
     {
@@ -58,6 +46,11 @@ class phpExcel
         $this->data = $data;//数据
     }
 
+    /**
+     * 执行导出操作
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
     public function exportExcel()
     {
         $spreadsheet = new Spreadsheet();
@@ -180,10 +173,10 @@ class phpExcel
                         list($a,$b) = explode(':',$pCoordinate);
                         if(ord($a)<ord($b)) {
                             $merge_arr = range(ord($a),ord($b));
-                            foreach ($merge_arr as $value )
+                            foreach ($merge_arr as $v )
                             {
-                                if(!isset($alignment_arr[chr($value)])) {
-                                    $alignment_arr[chr($value)] = $alignment;
+                                if(!isset($alignment_arr[chr($v)])) {
+                                    $alignment_arr[chr($v)] = $alignment;
                                 }
                             }
                         } elseif (ord($a) == ord($b)) {
@@ -219,12 +212,15 @@ class phpExcel
         // Set active sheet index to the first sheet, so Excel opens this as the first sheet
         $spreadsheet->setActiveSheetIndex(0);
 
-//        self::exportAction($spreadsheet,$this->FileName);//下载
-        self::exportLocal($spreadsheet,$this->FileName);//本地保存
+        if(!empty($this->data['savePath'])) {
+            self::exportLocal($spreadsheet,$this->FileName,$this->data['savePath']);//本地保存
+        } else {
+            self::exportAction($spreadsheet,$this->FileName);//下载
+        }
     }
 
     /**
-     * 实际导出操作( xls 和 xlsx )
+     * 实际导出网页下载操作( xls 和 xlsx )
      * @param $spreadsheet
      * @param string $fileName
      * @param string $type
@@ -289,8 +285,9 @@ class phpExcel
         if(!empty($savePath) && !is_dir($savePath)) {
             mkdir($savePath);
         }
+
         $writer = IOFactory::createWriter($spreadsheet, $type);
-        $writer->save($savePath.$fileName.'.'.strtolower($type));
+        $writer->save($savePath.'\\'.$fileName.'.'.strtolower($type));
         exit;
     }
 }

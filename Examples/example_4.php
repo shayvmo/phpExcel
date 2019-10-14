@@ -87,7 +87,15 @@ $excel = new \shayvmo\phpExcel([
             ],
         ],
 
-        'bold'=>['A5:H5'],//设置加粗样式，例如['A1', 'A2']
+        //设置加粗样式，例如['A1', 'A2']
+        'bold'=>['A5:H5'],
+
+        //设置行高【行数组=>对应行高】
+        'lineHeight'=> [
+            [[1,2,3],30],
+            [[4],20],
+        ],
+
     ],
     'data'=>[
         [
@@ -152,4 +160,4 @@ $excel = new \shayvmo\phpExcel([
  *2、保存路径
  * 默认是导出Excel下载，填写路径可以保存在服务器本地
  */
-$excel->exportExcel('1.xls',__DIR__);
+$excel->exportExcel(time().'.xls',__DIR__);

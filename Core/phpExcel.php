@@ -260,6 +260,18 @@ class phpExcel
                 }
             }
 
+            //行高
+            if(!empty($this->data['options']['lineHeight'])) {
+                foreach ($this->data['options']['lineHeight'] as $k => $v) {
+                    if( ( isset($v[0]) && is_array($v[0]) ) && ( isset($v[1])&&is_numeric($v[1])&&$v[1]>0 ) ) {
+
+                        foreach ($v[0] as $key=>$value) {
+                            $activeSheet->getRowDimension($value)->setRowHeight($v[1]);
+                        }
+                    }
+                }
+            }
+
 
 
             // Rename worksheet

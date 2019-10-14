@@ -27,9 +27,14 @@ $excel = new \shayvmo\phpExcel([
     'options'=>[
         'print'=>true,//设置打印格式
 
-        'freezePane'=>[],//锁定行数，例如表头为第一行，则锁定表头输入A2
+        //锁定行数，例如表头为第一行，则锁定表头输入A2
+//        'freezePane'=>[],
 
-        'setARGB'=>[],//设置背景色
+        //设置背景色 单元格=>颜色RGB
+        'setARGB'=>[
+            'A1' => 'FFFFFF00',
+            'F2' => 'FFFFFF00'
+        ],
 
         //设置宽度
         'setWidth'=>[
@@ -39,17 +44,28 @@ $excel = new \shayvmo\phpExcel([
             'G'=>15,
         ],
 
-        //设置单元格边框：位置，颜色
+        //设置单元格边框：位置=>颜色
         'setBorder'=>[
-            'A:G'=>'000000'
+            'A1:G8'=>'000000'
         ],
 
         //设置合并单元格
         'mergeCells'=>['A1:G1','A2:G2','A3:B3','C3:D3','E3:G3','A4:B4','C4:D4','E4:G4'],
 
-        'formula'=>['G9'=>'=G7+G8'],//设置公式，例如['F2' => '=IF(D2>0,E42/D2,0)']
+        //设置公式，例如['F2' => '=IF(D2>0,E42/D2,0)']
+        'formula'=>['G9' => '=G7+G8'],
 
-        'format'=>['A'=>''],//设置格式，整列设置，例如['A' => 'General']
+        //设置格式，整列设置，例如['A' => 'General']
+//        'format'=>['A'=>''],
+
+        //设置居中样式
+        'alignment'=>[
+//            'A1'=>['left','top'],//水平，垂直
+//            'D1'=>['center','center'],//水平，垂直
+//            'G1'=>['right','bottom'],//水平，垂直
+//            'A1:I2'=>['center','center'],//水平，垂直
+            'A:I'=>['center','center'],//水平，垂直
+        ],
 
         //字体
         'font'=>[
@@ -69,15 +85,6 @@ $excel = new \shayvmo\phpExcel([
                 'strikethrough' => true,//删除线,选填
                 'color' => '808080'//颜色,选填
             ],
-        ],
-
-        //设置居中样式
-        'alignment'=>[
-//            'A1'=>['left','top'],//水平，垂直
-//            'D1'=>['center','center'],//水平，垂直
-//            'G1'=>['right','bottom'],//水平，垂直
-//            'A1:I2'=>['center','center'],//水平，垂直
-            'A:I'=>['center','center'],//水平，垂直
         ],
 
         'bold'=>['A5:H5'],//设置加粗样式，例如['A1', 'A2']
@@ -138,5 +145,11 @@ $excel = new \shayvmo\phpExcel([
     ]
 ]);
 
-
-$excel->exportExcel('',__DIR__);
+/**
+ * 1、文件名称。例如：1.xls
+ * 自动根据文件名后缀，导出xls 或者xlsx
+ *
+ *2、保存路径
+ * 默认是导出Excel下载，填写路径可以保存在服务器本地
+ */
+$excel->exportExcel('1.xls',__DIR__);

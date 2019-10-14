@@ -36,7 +36,6 @@ class phpExcel
     public $Description;
     public $Keywords;
     public $Category;
-    public $alignment_style='';
     public $data;
 
     public function __construct($data)
@@ -51,6 +50,11 @@ class phpExcel
         $this->data = $data;//数据
     }
 
+    /**
+     * 导出操作
+     * @param string $file_name 文件名
+     * @param string $save_path 保存路径，默认不填是下载表格
+     */
     public function exportExcel($file_name='',$save_path='php://output')
     {
 
@@ -146,6 +150,33 @@ class phpExcel
                 }
             }
 
+            $highest_row = $activeSheet->getHighestRow();//最大行数
+
+            //字体
+            if(!empty($this->data['options']['font'])) {
+
+                foreach ($this->data['options']['font'] as $k=>$v)
+                {
+                    $array = [
+                        'font' => [
+                            'name' => isset($v['name'])?$v['name']:'Arial',
+                            'size' => isset($v['size'])?$v['size']:11,
+                            'bold' => isset($v['bold'])?$v['bold']:false,
+                            'italic' => isset($v['italic'])?$v['italic']:false,
+                            'underline' => Font::UNDERLINE_NONE,
+                            'strikethrough' => isset($v['strikethrough'])?$v['strikethrough']:false,
+                            'color' => ['rgb' => isset($v['color'])?$v['color']:'000000']
+                        ]
+                    ];
+                    if (preg_match('/^[A-Z]$/',$k)) {
+                        $activeSheet->getStyle($k.'1:'.$k.$highest_row)->applyFromArray($array);
+                    } else {
+                        $activeSheet->getStyle($k)->applyFromArray($array);
+                    }
+                }
+
+            }
+
 
             //设置居中样式
             if(!empty($this->data['options']['alignment']))
@@ -178,7 +209,7 @@ class phpExcel
                         $activeSheet->getStyle($pCoordinate)->applyFromArray($alignment);
 
                     } else if (preg_match('/^([A-Z])([:]([A-Z]))?$/',$pCoordinate)) {
-                        $highest_row = $activeSheet->getHighestRow();//最大行数
+
                         if (strpos($pCoordinate,':') === false) {
                             $activeSheet->getStyle($pCoordinate.'1:'.$pCoordinate.$highest_row)->applyFromArray($alignment);
                         } else {
@@ -214,12 +245,10 @@ class phpExcel
                         $activeSheet->getStyle($pCoordinate)->applyFromArray($border);
 
                     } else if (preg_match('/^([A-Z])([:]([A-Z]))?$/',$pCoordinate)) {
-                        $highest_row = $activeSheet->getHighestRow();//最大行数
                         if (strpos($pCoordinate,':') === false) {
                             $activeSheet->getStyle($pCoordinate.'1:'.$pCoordinate.$highest_row)->applyFromArray($border);
                         } else {
                             list($a,$b) = explode(':',$pCoordinate);
-
                             $highest_column = $activeSheet->getHighestColumn();//最大列
                             $activeSheet->getStyle($a.'1:'.$b.$highest_row)->applyFromArray($border);
                         }

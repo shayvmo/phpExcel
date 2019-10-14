@@ -186,6 +186,7 @@ class phpExcel_beta
                 }
             }
         }
+        $highest_row = $activeSheet->getHighestRow();//最大行数
 
 
         //设置居中样式
@@ -219,8 +220,6 @@ class phpExcel_beta
                     $activeSheet->getStyle($pCoordinate)->applyFromArray($alignment);
 
                 } else if (preg_match('/^([A-Z])([:]([A-Z]))?$/',$pCoordinate)) {
-//                    exit('success');
-                    $highest_row = $activeSheet->getHighestRow();//最大行数
 
                     if (strpos($pCoordinate,':') === false) {
                         $activeSheet->getStyle($pCoordinate.'1:'.$pCoordinate.$highest_row)->applyFromArray($alignment);
@@ -257,7 +256,7 @@ class phpExcel_beta
                     $activeSheet->getStyle($pCoordinate)->applyFromArray($border);
 
                 } else if (preg_match('/^([A-Z])([:]([A-Z]))?$/',$pCoordinate)) {
-                    $highest_row = $activeSheet->getHighestRow();//最大行数
+
                     if (strpos($pCoordinate,':') === false) {
                         $activeSheet->getStyle($pCoordinate.'1:'.$pCoordinate.$highest_row)->applyFromArray($border);
                     } else {
@@ -272,6 +271,31 @@ class phpExcel_beta
                     continue;
                 }
             }
+        }
+
+        //字体
+        if(!empty($this->data['options']['font'])) {
+
+            foreach ($this->data['options']['font'] as $k=>$v)
+            {
+                $array = [
+                    'font' => [
+                        'name' => isset($v['name'])?$v['name']:'Arial',
+                        'size' => isset($v['size'])?$v['size']:11,
+                        'bold' => isset($v['bold'])?$v['bold']:false,
+                        'italic' => isset($v['italic'])?$v['italic']:false,
+                        'underline' => Font::UNDERLINE_NONE,
+                        'strikethrough' => isset($v['strikethrough'])?$v['strikethrough']:false,
+                        'color' => ['rgb' => isset($v['color'])?$v['color']:'000000']
+                    ]
+                ];
+                if (preg_match('/^[A-Z]$/',$k)) {
+                    $activeSheet->getStyle($k.'1:'.$k.$highest_row)->applyFromArray($array);
+                } else {
+                    $activeSheet->getStyle($k)->applyFromArray($array);
+                }
+            }
+
         }
 
 

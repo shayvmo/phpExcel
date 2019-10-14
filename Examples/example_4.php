@@ -54,6 +54,26 @@ $excel = new \shayvmo\phpExcel_beta([
 
         'format'=>['A'=>''],//设置格式，整列设置，例如['A' => 'General']
 
+        //字体
+        'font'=>[
+            'A1'=>[
+                'name' => '仿宋',//字体,选填
+                'size' => 15,//字体大小,选填
+                'bold' => true,//是否加粗,选填
+                'italic' => false,//斜体,选填
+                'strikethrough' => true,//删除线,选填
+                'color' => '000000'//颜色,选填
+            ],
+            'B'=>[
+                'name' => 'Arial',//字体,选填
+                'size' => 11,//字体大小,选填
+                'bold' => true,//是否加粗,选填
+                'italic' => true,//斜体,选填
+                'strikethrough' => true,//删除线,选填
+                'color' => '808080'//颜色,选填
+            ],
+        ],
+
         //设置居中样式
         'alignment'=>[
 //            'A1'=>['left','top'],//水平，垂直

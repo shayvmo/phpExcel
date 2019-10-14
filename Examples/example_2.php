@@ -12,7 +12,6 @@ require_once '../vendor/autoload.php';
 include_once '../Core/phpExcel.php';
 
 $excel = new \shayvmo\phpExcel([
-    'savePath'=>'D:\wamp64\www\phpExcel\Examples',//保存路径
     'filename'=>'test_file'.time(),
     'properties'=>[
         'Creator'=>'Eric',//文件创建者

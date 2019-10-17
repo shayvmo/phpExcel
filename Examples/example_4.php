@@ -99,7 +99,7 @@ $excel = new \shayvmo\phpExcel([
     ],
     'data'=>[
         [
-            'A'=>'开心仓'
+            '开心仓'
         ],
         [
             'A'=>'入库验收单'

@@ -83,14 +83,35 @@ class phpExcel
 
             $activeSheet = $spreadsheet->getActiveSheet();
 
-            if (!empty($this->data['options']['print']) && is_bool($this->data['options']['print']) && $this->data['options']['print'] === true) {
-                $activeSheet->getPageSetup()->setPaperSize(PageSetup:: PAPERSIZE_A4);
+            if (!empty($this->data['options']['print']) ) {
+                $PaperSize = PageSetup:: PAPERSIZE_A4;
+                $PageMarginTop = 1 / 2.54 / 2 ;
+                $PageMarginBottom = 1 / 2.54 * 2 ;
+                $PageMarginLeft = 1 / 2.54 / 2 ;
+                $PageMarginRight = 1 / 2.54 / 2 ;
+
+                if(!empty($this->data['options']['print']['PaperSize']) && is_numeric($this->data['options']['print']['PaperSize'])) {
+                    $PaperSize = abs($this->data['options']['print']['PaperSize']);
+                }
+                if(!empty($this->data['options']['print']['PageMargins'][0]) && is_numeric($this->data['options']['print']['PageMargins'][0])) {
+                    $PageMarginTop = abs($this->data['options']['print']['PageMargins'][0]);
+                }
+                if(!empty($this->data['options']['print']['PageMargins'][1]) && is_numeric($this->data['options']['print']['PageMargins'][1])) {
+                    $PageMarginBottom = abs($this->data['options']['print']['PageMargins'][1]);
+                }
+                if(!empty($this->data['options']['print']['PageMargins'][2]) && is_numeric($this->data['options']['print']['PageMargins'][2])) {
+                    $PageMarginLeft = abs($this->data['options']['print']['PageMargins'][2]);
+                }
+                if(!empty($this->data['options']['print']['PageMargins'][3]) && is_numeric($this->data['options']['print']['PageMargins'][3])) {
+                    $PageMarginRight = abs($this->data['options']['print']['PageMargins'][3]);
+                }
+
+                $activeSheet->getPageSetup()->setPaperSize($PaperSize);
                 /* 设置打印时边距 */
-                $pValue = 1 / 2.54;
-                $activeSheet->getPageMargins()->setTop($pValue / 2);
-                $activeSheet->getPageMargins()->setBottom($pValue * 2);
-                $activeSheet->getPageMargins()->setLeft($pValue / 2);
-                $activeSheet->getPageMargins()->setRight($pValue / 2);
+                $activeSheet->getPageMargins()->setTop($PageMarginTop);
+                $activeSheet->getPageMargins()->setBottom($PageMarginBottom);
+                $activeSheet->getPageMargins()->setLeft($PageMarginLeft);
+                $activeSheet->getPageMargins()->setRight($PageMarginRight);
             }
 
 

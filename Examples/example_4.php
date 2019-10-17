@@ -25,7 +25,12 @@ $excel = new \shayvmo\phpExcel([
         ['Title'=>'sheet01']
     ],
     'options'=>[
-        'print'=>true,//设置打印格式
+        //设置打印格式
+        'print'=>[
+            'PaperSize'=>0,
+            'PageMargins'=>[1,2,3,4],//上下左右
+        ],
+
 
         //锁定行数，例如表头为第一行，则锁定表头输入A2
 //        'freezePane'=>[],

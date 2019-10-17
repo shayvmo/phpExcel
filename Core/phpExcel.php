@@ -37,6 +37,12 @@ class phpExcel
     public $Keywords;
     public $Category;
     public $data;
+    public $index_key = [
+        'A','B','C','D','E','F','G','H','I','J',
+        'K','L','M','N','O','P','Q','R','S','T',
+        'U','V','W','X','Y','Z',
+
+    ];
 
     public function __construct($data)
     {
@@ -144,8 +150,11 @@ class phpExcel
             if (!empty($this->data['data'])) {
                 foreach ($this->data['data'] as $key => $value) {
                     foreach ($value as $k => $v) {
-                        $activeSheet->setCellValueExplicit($k . ($key+1), $v,DataType::TYPE_STRING);
-
+                        if(in_array($k,$this->index_key)) {
+                            $activeSheet->setCellValueExplicit($k . ($key+1), $v,DataType::TYPE_STRING);
+                        } elseif(isset($this->index_key[$k])) {
+                            $activeSheet->setCellValueExplicit($this->index_key[$k] . ($key+1), $v,DataType::TYPE_STRING);
+                        }
                     }
                 }
             }

@@ -169,12 +169,16 @@ class phpExcel
 
             // Add some data
             if (!empty($this->data['data'])) {
+                $dataType = DataType::TYPE_STRING;
                 foreach ($this->data['data'] as $key => $value) {
                     foreach ($value as $k => $v) {
+                        if(is_numeric($v)) {
+                            $dataType = DataType::TYPE_NUMERIC;
+                        }
                         if(in_array($k,$this->index_key,true)) {
-                            $activeSheet->setCellValueExplicit($k . ($key+1), $v,DataType::TYPE_STRING);
+                            $activeSheet->setCellValueExplicit($k . ($key+1), $v,$dataType);
                         } elseif(isset($this->index_key[$k])) {
-                            $activeSheet->setCellValueExplicit($this->index_key[$k] . ($key+1), $v,DataType::TYPE_STRING);
+                            $activeSheet->setCellValueExplicit($this->index_key[$k] . ($key+1), $v,$dataType);
                         }
                     }
                 }
